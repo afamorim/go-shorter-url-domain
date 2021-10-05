@@ -18,7 +18,7 @@ var (
 	urlRepository repository.UrlRepository
 )
 
-func NewUrlService() UrlService {
+func NewUrlService(urlRepository *repository.UrlRepository) UrlService {
 	//urlRepository = ur
 	return &service{}
 }
