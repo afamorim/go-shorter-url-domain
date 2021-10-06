@@ -13,12 +13,13 @@ type UrlRepositoryMock struct {
 	mock.Mock
 }
 
-func (r UrlRepositoryMock) Save(url *model.Url) error {
-	url.Id = 1
-	return nil
+func (r *UrlRepositoryMock) Save(url model.Url) error {
+	args := r.Called(url)
+
+	return args.Error(0)
 }
 
-func (r UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error) {
+func (r *UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error) {
 	url := model.Url{
 		Id:          1,
 		OriginalUrl: "http://www.teste.com.br",
@@ -29,11 +30,16 @@ func (r UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error)
 }
 
 func TestSave(t *testing.T) {
-	urlRepositoryMock := UrlRepositoryMock{}
-	urlService := NewUrlService(urlRepositoryMock)
 	url := model.Url{}
-	urlService.Save(&url)
+
+	urlRepositoryMock := UrlRepositoryMock{}
+	urlRepositoryMock.On("Save", url).Return(nil)
+
+	urlService := NewUrlService(&urlRepositoryMock)
+
+	urlService.Save(url)
 	fmt.Println(url.Id)
 	assert.Equal(t, 1, url.Id)
-	//t.Error("ERROR")
+
+	urlRepositoryMock.AssertExpectations(t)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type UrlService interface {
-	Save(url *model.Url) error
+	Save(url model.Url) error
 	FindByShorter(shoterUrl string) (interface{}, error)
 }
 
@@ -25,7 +25,7 @@ func NewUrlService(urlRepository repository.UrlRepository) UrlService {
 	return &service{}
 }
 
-func (s *service) Save(url *model.Url) error {
+func (s service) Save(url model.Url) error {
 	if url.OriginalUrl == "" {
 		return errors.New("Original URL is mandatory")
 	}
@@ -33,8 +33,7 @@ func (s *service) Save(url *model.Url) error {
 	return err
 }
 
-func (s *service) FindByShorter(shoterUrl string) (interface{}, error) {
-
+func (s service) FindByShorter(shoterUrl string) (interface{}, error) {
 	url, err := urlRepository.FindByShorter(shoterUrl)
 	return url, err
 }
