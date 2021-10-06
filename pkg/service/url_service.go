@@ -8,6 +8,8 @@ import (
 )
 
 type UrlService interface {
+	Save(url *model.Url) error
+	FindByShorter(shoterUrl string) (interface{}, error)
 }
 
 type service struct {
@@ -18,7 +20,7 @@ var (
 	urlRepository repository.UrlRepository
 )
 
-func NewUrlService(urlRepository *repository.UrlRepository) UrlService {
+func NewUrlService(urlRepository repository.UrlRepository) UrlService {
 	//urlRepository = ur
 	return &service{}
 }

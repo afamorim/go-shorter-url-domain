@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/afamorim/go-shorter-url-domain/pkg/model"
@@ -8,16 +9,16 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type UlRepositoryMock struct {
+type UrlRepositoryMock struct {
 	mock.Mock
 }
 
-func (r *UlRepositoryMock) Save(url *model.Url) error {
+func (r UrlRepositoryMock) Save(url *model.Url) error {
 	url.Id = 1
 	return nil
 }
 
-func (r *UlRepositoryMock) FindByShorter(shoterUrl string) (model.Url, error) {
+func (r UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error) {
 	url := model.Url{
 		Id:          1,
 		OriginalUrl: "http://www.teste.com.br",
@@ -28,10 +29,11 @@ func (r *UlRepositoryMock) FindByShorter(shoterUrl string) (model.Url, error) {
 }
 
 func TestSave(t *testing.T) {
-	urlRepository := UlRepositoryMock{}
-	urlService := NewUrlService(&urlRepository)
+	urlRepositoryMock := UrlRepositoryMock{}
+	urlService := NewUrlService(urlRepositoryMock)
 	url := model.Url{}
-	urlService.Save(url)
+	urlService.Save(&url)
+	fmt.Println(url.Id)
 	assert.Equal(t, 1, url.Id)
-	t.Error("ERROR")
+	//t.Error("ERROR")
 }
