@@ -8,32 +8,30 @@ import (
 )
 
 type UrlService interface {
-	Save(url model.Url) error
-	FindByShorter(shoterUrl string) (interface{}, error)
+	Save(url model.Url) (model.Url, error)
+	FindByShorter(shoterUrl string) (model.Url, error)
 }
 
 type service struct {
-	//urlRepository UrlRepository
-}
-
-var (
 	urlRepository repository.UrlRepository
-)
+}
 
-func NewUrlService(urlRepository repository.UrlRepository) UrlService {
+func NewUrlService(urlRepImpl repository.UrlRepository) UrlService {
 	//urlRepository = ur
-	return &service{}
-}
-
-func (s service) Save(url model.Url) error {
-	if url.OriginalUrl == "" {
-		return errors.New("Original URL is mandatory")
+	return service{
+		urlRepository: urlRepImpl,
 	}
-	err := urlRepository.Save(url)
-	return err
 }
 
-func (s service) FindByShorter(shoterUrl string) (interface{}, error) {
-	url, err := urlRepository.FindByShorter(shoterUrl)
+func (s service) Save(url model.Url) (model.Url, error) {
+	if url.OriginalUrl == "" {
+		return url, errors.New("Original URL is mandatory")
+	}
+	newUrl, err := s.urlRepository.Save(url)
+	return newUrl, err
+}
+
+func (s service) FindByShorter(shoterUrl string) (model.Url, error) {
+	url, err := s.urlRepository.FindByShorter(shoterUrl)
 	return url, err
 }

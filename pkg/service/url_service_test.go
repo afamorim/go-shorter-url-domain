@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/afamorim/go-shorter-url-domain/pkg/model"
@@ -13,13 +12,13 @@ type UrlRepositoryMock struct {
 	mock.Mock
 }
 
-func (r *UrlRepositoryMock) Save(url model.Url) error {
+func (r *UrlRepositoryMock) Save(url model.Url) (model.Url, error) {
 	args := r.Called(url)
 
-	return args.Error(0)
+	return args.Get(0).(model.Url), args.Error(1)
 }
 
-func (r *UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error) {
+func (r *UrlRepositoryMock) FindByShorter(shorterUrl string) (model.Url, error) {
 	url := model.Url{
 		Id:          1,
 		OriginalUrl: "http://www.teste.com.br",
@@ -29,17 +28,41 @@ func (r *UrlRepositoryMock) FindByShorter(shorterUrl string) (interface{}, error
 	return url, nil
 }
 
-func TestSave(t *testing.T) {
-	url := model.Url{}
+func TestSaveSucess(t *testing.T) {
+	url := model.Url{
+		OriginalUrl: "http://www.teste.com",
+	}
 
 	urlRepositoryMock := UrlRepositoryMock{}
-	urlRepositoryMock.On("Save", url).Return(nil)
+	urlRepositoryMock.On("Save", url).Return(
+		model.Url{
+			Id: 2,
+		},
+		nil)
 
 	urlService := NewUrlService(&urlRepositoryMock)
 
-	urlService.Save(url)
-	fmt.Println(url.Id)
-	assert.Equal(t, 1, url.Id)
+	newUrl, _ := urlService.Save(url)
+
+	assert.Equal(t, 2, newUrl.Id)
+
+	urlRepositoryMock.AssertExpectations(t)
+}
+
+func TestSaveEmptyUrlError(t *testing.T) {
+	url := model.Url{}
+
+	urlRepositoryMock := UrlRepositoryMock{}
+	urlRepositoryMock.On("Save", url).Return(
+		model.Url{
+			Id: 2,
+		},
+		nil).Times(4)
+
+	urlService := NewUrlService(&urlRepositoryMock)
+
+	_, err := urlService.Save(url)
+	assert.True(t, err != nil, err.Error())
 
 	urlRepositoryMock.AssertExpectations(t)
 }
