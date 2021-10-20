@@ -25,7 +25,7 @@ func NewUrlService(urlRepImpl repository.UrlRepository) UrlService {
 
 func (s service) Save(url model.Url) (model.Url, error) {
 	if url.OriginalUrl == "" {
-		return url, errors.New("Original URL is mandatory")
+		return url, errors.New("original url is mandatory")
 	}
 	newUrl, err := s.urlRepository.Save(url)
 	return newUrl, err

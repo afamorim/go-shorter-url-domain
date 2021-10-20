@@ -42,27 +42,33 @@ func TestSaveSucess(t *testing.T) {
 
 	urlService := NewUrlService(&urlRepositoryMock)
 
-	newUrl, _ := urlService.Save(url)
+	newUrl, err := urlService.Save(url)
 
 	assert.Equal(t, 2, newUrl.Id)
+	assert.NoError(t, err)
 
 	urlRepositoryMock.AssertExpectations(t)
 }
 
+/*
 func TestSaveEmptyUrlError(t *testing.T) {
-	url := model.Url{}
+	url := model.Url{
+		OriginalUrl: "",
+	}
 
 	urlRepositoryMock := UrlRepositoryMock{}
 	urlRepositoryMock.On("Save", url).Return(
-		model.Url{
-			Id: 2,
-		},
-		nil).Times(4)
+		model.Url{},
+		errors.New("original url is mandatory"))
 
 	urlService := NewUrlService(&urlRepositoryMock)
 
-	_, err := urlService.Save(url)
-	assert.True(t, err != nil, err.Error())
+	newUrl, err := urlService.Save(url)
+	//assert.True(t, err != nil, err.Error())
+	//fmt.Print(err)
+	assert.EqualError(t, err, "original url is mandatory")
+	assert.Equal(t, 0, newUrl.Id)
 
 	urlRepositoryMock.AssertExpectations(t)
 }
+*/
