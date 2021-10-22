@@ -20,7 +20,7 @@ func (r *UrlRepositoryMock) Save(url model.Url) (model.Url, error) {
 
 func (r *UrlRepositoryMock) FindByShorter(shorterUrl string) (model.Url, error) {
 	url := model.Url{
-		Id:          1,
+		Id:          "1",
 		OriginalUrl: "http://www.teste.com.br",
 		CompressUrl: "http://yougotit.com",
 	}
@@ -36,7 +36,7 @@ func TestSaveSucess(t *testing.T) {
 	urlRepositoryMock := UrlRepositoryMock{}
 	urlRepositoryMock.On("Save", url).Return(
 		model.Url{
-			Id: 2,
+			Id: "2",
 		},
 		nil)
 
@@ -50,16 +50,12 @@ func TestSaveSucess(t *testing.T) {
 	urlRepositoryMock.AssertExpectations(t)
 }
 
-/*
 func TestSaveEmptyUrlError(t *testing.T) {
 	url := model.Url{
 		OriginalUrl: "",
 	}
 
 	urlRepositoryMock := UrlRepositoryMock{}
-	urlRepositoryMock.On("Save", url).Return(
-		model.Url{},
-		errors.New("original url is mandatory"))
 
 	urlService := NewUrlService(&urlRepositoryMock)
 
@@ -71,4 +67,3 @@ func TestSaveEmptyUrlError(t *testing.T) {
 
 	urlRepositoryMock.AssertExpectations(t)
 }
-*/

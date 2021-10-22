@@ -1,7 +1,7 @@
 package model
 
 type Url struct {
-	Id          int
+	Id          string
 	OriginalUrl string
 	CompressUrl string
 }
