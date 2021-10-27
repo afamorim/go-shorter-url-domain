@@ -39,8 +39,8 @@ func (s service) Save(url model.Url) (model.Url, error) {
 	id, _ := h.Encode([]int{int(now.Unix())})
 	url.Id = id
 	url.CompressUrl = base_url + id
-	newUrl, err := s.urlRepository.Save(url)
-	return newUrl, err
+	err := s.urlRepository.Save(url)
+	return url, err
 }
 
 func (s service) FindByShorter(shoterUrl string) (model.Url, error) {
